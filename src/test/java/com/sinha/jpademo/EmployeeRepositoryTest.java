@@ -13,10 +13,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import java.util.List;
 
 import static com.sinha.jpademo.entity.Employee.EmployeeBuilder.anEmployee;
+import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+
 
 @RunWith(SpringJUnit4ClassRunner.class)
     @ContextConfiguration(
@@ -27,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 public class EmployeeRepositoryTest {
 
 
-        @Resource
+        @Autowired
         private EmployeeRepository employeeRepository;
 
         @Test
@@ -35,9 +37,16 @@ public class EmployeeRepositoryTest {
             Employee savedEmployeeOne = anEmployee()
                     .withEmployeeName("John")
                     .build();
+            Employee savedEmployeeTwo = anEmployee()
+                    .withEmployeeName("Jack")
+                    .build();
             employeeRepository.save(savedEmployeeOne);
+            employeeRepository.save(savedEmployeeTwo);
             System.out.println("ID : " + savedEmployeeOne.getId() + " Employee Name :" + savedEmployeeOne.getEmployeeName());
+            System.out.println("ID : " + savedEmployeeTwo.getId() + " Employee Name :" + savedEmployeeTwo.getEmployeeName());
+            List<Employee> fetchedEmployee =  employeeRepository.findById(savedEmployeeOne.getId());
             assertEquals("John",savedEmployeeOne.getEmployeeName());
+            assertThat(fetchedEmployee.contains(savedEmployeeTwo));
         }
 
 }
